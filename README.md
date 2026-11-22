@@ -1,7 +1,6 @@
 # Depth Map Generator
 
-Generate colorized depth-map images from JPG and JPEG photos using Apple's
-DepthPro2 model.
+Generate depth-map images from JPG and JPEG photos using Apple's DepthPro2 model.
 
 ## Requirements
 
