@@ -1,3 +1,4 @@
+import argparse
 from functools import partial
 
 import matplotlib
@@ -53,13 +54,18 @@ def get_depth_map(file, out_dir=OUT_DIR):
 
 
 def main():
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    files = sorted(f for f in IN_DIR.iterdir() if f.suffix.lower() in EXTS)
+    parser = argparse.ArgumentParser(description="Generate depth maps for images.")
+    parser.add_argument("--in_dir", type=Path, default=IN_DIR, help="Directory containing input images.")
+    parser.add_argument("--out_dir", type=Path, default=OUT_DIR, help="Directory for generated depth maps.")
+    args = parser.parse_args()
+
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    files = sorted(f for f in args.in_dir.iterdir() if f.suffix.lower() in EXTS)
     print(f"Found {len(files)} images")
 
     for file in files:
         try:
-            get_depth_map(file)
+            get_depth_map(file, out_dir=args.out_dir)
         except Exception as e:
             print(f"failed on {file.name}: {e}")
         torch.cuda.empty_cache()
