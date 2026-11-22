@@ -1,9 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cu132
+
 depth_pro_2==0.1
 huggingface_hub==2.4.0
 matplotlib==3.11.2
 numpy==2.4.6
 pillow==13.0.0
 safetensors==0.8.0
-torch==2.15.0
-torchaudio==2.11.1
-torchvision==0.29.2
+torch==2.15.0+cu132
+torchaudio==2.11.1+cu132
+torchvision==0.29.2+cu132
