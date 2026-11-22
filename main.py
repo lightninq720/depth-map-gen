@@ -42,7 +42,7 @@ def gen_depth_im(depth, out_path="output.jpg", colour=True):
         Image.fromarray((inv * 255).astype(np.uint8)).save(out_path, quality=95)
 
 
-def get_depth_map(file, out_dir=OUT_DIR):
+def get_depth_map(file, out_dir=OUT_DIR, colour=True):
     file = Path(file)
     out_path = Path(out_dir) / f"{file.stem}_depth.jpg"
 
@@ -50,13 +50,17 @@ def get_depth_map(file, out_dir=OUT_DIR):
     image, f_px = load_rgb(str(file))
     with torch.no_grad():
         depth = model.infer(transform(image), f_px=f_px)["depth"]
-    gen_depth_im(depth, out_path=out_path)
+    gen_depth_im(depth, out_path=out_path, colour=colour)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Generate depth maps for images.")
     parser.add_argument("--in_dir", type=Path, default=IN_DIR, help="Directory containing input images.")
     parser.add_argument("--out_dir", type=Path, default=OUT_DIR, help="Directory for generated depth maps.")
+    colour_options = parser.add_mutually_exclusive_group()
+    colour_options.add_argument("--colour", dest="colour", action="store_true", help="Save colourized depth maps (default).")
+    colour_options.add_argument("--no-colour", dest="colour", action="store_false", help="Save grayscale depth maps.")
+    parser.set_defaults(colour=True)
     args = parser.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -65,7 +69,7 @@ def main():
 
     for file in files:
         try:
-            get_depth_map(file, out_dir=args.out_dir)
+            get_depth_map(file, out_dir=args.out_dir, colour=args.colour)
         except Exception as e:
             print(f"failed on {file.name}: {e}")
         torch.cuda.empty_cache()
